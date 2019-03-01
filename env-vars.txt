@@ -1,1 +1,3 @@
 VAGRANT_HOME=E:\Vagrant\.vagrant.d
+VAGRANT_DEFAULT_PROVIDER=virtualbox
+VAGRANT_FORCE_COLOR=true
