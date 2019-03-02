@@ -1,3 +1,4 @@
 VAGRANT_HOME=E:\Vagrant\.vagrant.d
 VAGRANT_DEFAULT_PROVIDER=virtualbox
 VAGRANT_FORCE_COLOR=true
+VBOX_MSI_INSTALL_PATH=E:\Program Files\Oracle\VirtualBox\
