@@ -1,4 +1,43 @@
+# FOR WINDOWS NATIVE
 VAGRANT_HOME=E:\Vagrant\.vagrant.d
 VAGRANT_DEFAULT_PROVIDER=virtualbox
 VAGRANT_FORCE_COLOR=true
 VBOX_MSI_INSTALL_PATH=E:\Program Files\Oracle\VirtualBox\
+
+# FOR WSL
+# READ THE DOCS: https://www.vagrantup.com/docs/other/wsl.html
+# PATH=$PATH:/mnt/c/Windows/System32/
+# PATH=$PATH:/mnt/e/Program\ Files/Oracle/VirtualBox/
+# VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1"
+# VAGRANT_HOME=/mnt/e/Vagrant/.vagrant.d
+# VAGRANT_DEFAULT_PROVIDER=virtualbox
+# VAGRANT_FORCE_COLOR=true
+# VAGRANT_WSL_DISABLE_VAGRANT_HOME=1
+# VAGRANT_WSL_WINDOWS_ACCESS_USER_HOME_PATH=/mnt/e/Vagrant
+
+
+export PATH=$PATH:/mnt/c/Windows/System32/
+export PATH=$PATH:/mnt/e/Program Files/Oracle/VirtualBox/
+export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS=1
+export VAGRANT_HOME=/mnt/e/Vagrant/.vagrant.d
+export VAGRANT_DEFAULT_PROVIDER=virtualbox
+export VAGRANT_FORCE_COLOR=true
+export VAGRANT_WSL_WINDOWS_ACCESS_USER_HOME_PATH=/mnt/e/Vagrant
+export VAGRANT_WSL_DISABLE_VAGRANT_HOME=1
+export DISPLAY=:0
+
+# Para executar com sucesso o Vagrant no WSL, é executar o comando:
+# powershell.exe -Command "chcp 932"
+# Para voltar ao charset UTF-8, execute:
+# powershell.exe -Command "chcp 65001"
+# LEIA: https://laboradian.com/what-to-do-if-vagrant-up-fails-in-wsl/
+# TRADUÇÃO: https://translate.google.com.br/translate?hl=pt-BR&sl=auto&tl=pt&u=https%3A%2F%2Flaboradian.com%2Fwhat-to-do-if-vagrant-up-fails-in-wsl%2F
+
+# Para o plugin hostupdater, precisa dar permissão de leitura ao arquivo hosts para o usuário que executa o vagrant
+# LEIA: https://github.com/cogitatio/vagrant-hostsupdater
+
+# Use o plugin vagrant-vbguest para atualizar as guest tools do virtualbox automaticamente
+# LEIA: https://github.com/dotless-de/vagrant-vbguest
+
+# Use o plugin para inputar valores no script como variáveis
+# LEIA: https://github.com/gosuri/vagrant-env
