@@ -1,21 +1,12 @@
-# FOR WINDOWS NATIVE
-VAGRANT_HOME=E:\Vagrant\.vagrant.d
-VAGRANT_DEFAULT_PROVIDER=virtualbox
-VAGRANT_FORCE_COLOR=true
-VBOX_MSI_INSTALL_PATH=E:\Program Files\Oracle\VirtualBox\
-
-# FOR WSL
-# READ THE DOCS: https://www.vagrantup.com/docs/other/wsl.html
-# PATH=$PATH:/mnt/c/Windows/System32/
-# PATH=$PATH:/mnt/e/Program\ Files/Oracle/VirtualBox/
-# VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1"
-# VAGRANT_HOME=/mnt/e/Vagrant/.vagrant.d
+# ### FOR WINDOWS NATIVE ###
+# VAGRANT_HOME=E:\Vagrant\.vagrant.d
 # VAGRANT_DEFAULT_PROVIDER=virtualbox
 # VAGRANT_FORCE_COLOR=true
-# VAGRANT_WSL_DISABLE_VAGRANT_HOME=1
-# VAGRANT_WSL_WINDOWS_ACCESS_USER_HOME_PATH=/mnt/e/Vagrant
+# VBOX_MSI_INSTALL_PATH=E:\Program Files\Oracle\VirtualBox\
 
-
+# ### FOR WSL ###
+# READ THE DOCS: https://www.vagrantup.com/docs/other/wsl.html
+# Add to your ~/.bashrc file
 export PATH=$PATH:/mnt/c/Windows/System32/
 export PATH=$PATH:/mnt/e/Program Files/Oracle/VirtualBox/
 export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS=1
