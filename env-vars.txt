@@ -15,6 +15,7 @@ export VAGRANT_DEFAULT_PROVIDER=virtualbox
 export VAGRANT_FORCE_COLOR=true
 export VAGRANT_WSL_WINDOWS_ACCESS_USER_HOME_PATH=/mnt/e/Vagrant
 export VAGRANT_WSL_DISABLE_VAGRANT_HOME=1
+export VAGRANT_BOX_UPDATE_CHECK_DISABLE=true
 export DISPLAY=:0
 
 # Para executar com sucesso o Vagrant no WSL, é executar o comando:

@@ -31,6 +31,24 @@ Vagrant.configure("2") do |config|
       end
     end
 
+    #config.vm.provision :ansible do |ansible|
+    #  ansible.playbook = "./provision/your_playbook.yml"
+    #  ansible.inventory_file = "./provision/inventory/vagrant.py"
+    #  ansible.verbose = true
+    #end
+
+    #config.ssh do |ssh|
+    #  ssh.username = 'vagrant'
+    #  ssh.password = 'vagrant'
+    #  ssh.insert_key = false
+    #end
+    #config.ssh.private_key_path = "~/.ssh/id_rsa"
+    config.ssh.forward_agent = true
+    config.ssh.forward_x11= true
+    #config.ssh.host = node[:ip]
+    #config.ssh.port = 22
+    #config.ssh.username = root
+
     config.vm.provision "shell", inline: <<-SHELL
       sudo yum makecache fast
       sudo localectl set-keymap br-abnt2

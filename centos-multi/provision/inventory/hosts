@@ -1,0 +1,2 @@
+ex5web.box ansible_port=22 ansible_host= 192.168.56.210
+ex5db.box ansible_port=22 ansible_host= 192.168.56.211
