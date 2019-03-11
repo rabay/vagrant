@@ -4,6 +4,7 @@
 ### Vagrant ###
 # General
 .vagrant/
+files/
 
 ### Vagrant Patch ###
 *.box

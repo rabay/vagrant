@@ -33,3 +33,9 @@ export DISPLAY=:0
 
 # Use o plugin para inputar valores no script como variáveis
 # LEIA: https://github.com/gosuri/vagrant-env
+
+# Use o plugin para configuração do proxy nas VMs
+# LEIA: https://github.com/tmatilai/vagrant-proxyconf
+
+# Crie uma rede NAT no Windows para uso com o Hyper-V
+# LEIA: https://docs.microsoft.com/pt-br/virtualization/hyper-v-on-windows/user-guide/setup-nat-network

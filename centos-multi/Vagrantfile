@@ -2,8 +2,8 @@
 # vi: set ft=ruby :
 
 nodes = [
-  { :hostname => 'ex5web', :ip => '192.168.56.210', :box => 'centos/7' },
-  { :hostname => 'ex5db',  :ip => '192.168.56.211', :box => 'centos/7', :ram => 512 }
+  { :hostname => 'ex5web', :ip => '192.168.56.210', :box => 'centos/7', :cpus => 1 },
+  { :hostname => 'ex5db',  :ip => '192.168.56.211', :box => 'centos/7', :cpus => 1, :ram => 512 }
 ]
 
 Vagrant.configure("2") do |config|
@@ -11,7 +11,6 @@ Vagrant.configure("2") do |config|
     config.vm.define node[:hostname] do |nodeconfig|
       nodeconfig.vm.box = node[:box] ? node[:box] : "centos/7";
       nodeconfig.vm.hostname = node[:hostname] + ".box"
-      nodeconfig.vm.network :private_network, ip: node[:ip], :name => 'VirtualBox Host-Only Ethernet Adapter', :adapter => 2
       memory = node[:ram] ? node[:ram] : 256;
 
       if Vagrant.has_plugin?("vagrant-timezone")
@@ -22,42 +21,73 @@ Vagrant.configure("2") do |config|
         vb.gui = false
         vb.name = node[:hostname] + ".box"
         vb.memory = memory
-        vb.cpus = 1
+        vb.cpus = node[:cpus] ? node[:cpus] : 1;
+        nodeconfig.vm.synced_folder ".", "/vagrant", disabled: false, owner: "vagrant", group: "root", automount: true
+        nodeconfig.vm.network :private_network, ip: node[:ip], :name => 'VirtualBox Host-Only Ethernet Adapter', :adapter => 2
         vb.customize [
           "modifyvm", :id,
           "--cpuexecutioncap", "50",
           "--hwvirtex", "on",
         ]
       end
+
+      nodeconfig.vm.provider "hyperv" do |h|
+        h.vmname = node[:hostname] + ".box"
+        h.cpus = node[:cpus] ? node[:cpus] : 1;
+        h.enable_virtualization_extensions = true
+        h.memory = 256
+        h.maxmemory = 256
+
+        nodeconfig.vm.synced_folder ".", "/vagrant", type: "smb",
+          smb_username: "change@me.com", smb_host: "192.168.235.1",
+          disabled: false, owner: "vagrant", group: "vagrant"
+        nodeconfig.vm.network "private_network", bridge: "NATSwitch"
+        
+        if Vagrant.has_plugin?("vagrant-proxyconf")
+          nodeconfig.proxy.http     = "http://127.0.0.1:3128/"
+          nodeconfig.proxy.https    = "http://127.0.0.1:3128/"
+          nodeconfig.proxy.no_proxy = "vm-centos-7-*,192.168.235.100,192.168.235.101,192.168.235.102,192.168.235.103,192.168.235.104,192.168.235.105,192.168.235.106,192.168.235.107,192.168.235.108,192.168.235.109,192.168.235.110,192.168.235.111,192.168.235.112,192.168.235.113,192.168.235.114,192.168.235.115,192.168.235.116,192.168.235.117,192.168.235.118,192.168.235.119,192.168.235.120,192.168.235.121,192.168.235.122,192.168.235.123,192.168.235.124,192.168.235.125,192.168.235.126,192.168.235.127,192.168.235.128,192.168.235.129,192.168.235.130,192.168.235.131,192.168.235.132,192.168.235.133,192.168.235.134,192.168.235.135,192.168.235.136,192.168.235.137,192.168.235.138,192.168.235.139,192.168.235.140,192.168.235.141,192.168.235.142,192.168.235.143,192.168.235.144,192.168.235.145,192.168.235.146,192.168.235.147,192.168.235.148,192.168.235.149,192.168.235.150,127.0.0.1,localhost"
+          #nodeconfig.vm.provision "file", preserve_order: true, run: "once", source: "files/cntlm.conf", destination: "/tmp/cntlm.conf"
+          nodeconfig.vm.provision "shell", preserve_order: true, run: "once", inline: <<-SHELL
+            echo "Instalando o CNTLM..."
+            sudo cp /vagrant/files/cntlm-0.92.3-1.x86_64.rpm /tmp/
+            sudo chmod +x /tmp/cntlm-0.92.3-1.x86_64.rpm
+            sudo rpm -Uvh /tmp/cntlm-0.92.3-1.x86_64.rpm
+            sudo mv -vf /etc/cntlm.conf /etc/cntlm.conf.bkp
+            sudo mv -vf /vagrant/files/cntlm.conf /etc/cntlm.conf
+            sudo mkdir /var/run/cntlm
+            sudo chown -R cntlm:cntlm /var/run/cntlm
+            sudo systemctl enable cntlm
+            sudo systemctl start cntlm
+            sudo systemctl status cntlm
+            echo "Configurando proxy no YUM..."
+            sudo cat /vagrant/files/hosts >> /etc/hosts
+            echo "Atualizando cache do YUM..."
+            sudo yum makecache fast
+          SHELL
+        end
+      end
+
+      #nodeconfig.vm.provision :ansible do |ansible|
+      #  ansible.playbook = "./provision/your_playbook.yml"
+      #  ansible.inventory_file = "./provision/inventory/vagrant.py"
+      #  ansible.verbose = true
+      #end
+
+      #nodeconfig.ssh.forward_agent = true
+      #nodeconfig.ssh.forward_x11= true
+
+      nodeconfig.vm.provision "shell", preserve_order: true, run: "once", inline: <<-SHELL
+        echo "Executando provisionamento geral via SHELL script..."
+        sudo localectl set-keymap br-abnt2
+        sudo localectl set-x11-keymap br-abnt2
+        sudo localectl set-locale LANG="en_US.utf8"
+        sudo sed -i "s/#PermitRootLogin/PermitRootLogin/g" /etc/ssh/sshd_config
+        sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+        sudo sed -i "s/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g" /etc/ssh/sshd_config
+        sudo systemctl restart sshd
+      SHELL
+
     end
-
-    #config.vm.provision :ansible do |ansible|
-    #  ansible.playbook = "./provision/your_playbook.yml"
-    #  ansible.inventory_file = "./provision/inventory/vagrant.py"
-    #  ansible.verbose = true
-    #end
-
-    #config.ssh do |ssh|
-    #  ssh.username = 'vagrant'
-    #  ssh.password = 'vagrant'
-    #  ssh.insert_key = false
-    #end
-    #config.ssh.private_key_path = "~/.ssh/id_rsa"
-    config.ssh.forward_agent = true
-    config.ssh.forward_x11= true
-    #config.ssh.host = node[:ip]
-    #config.ssh.port = 22
-    #config.ssh.username = root
-
-    config.vm.provision "shell", inline: <<-SHELL
-      sudo yum makecache fast
-      sudo localectl set-keymap br-abnt2
-      sudo localectl set-x11-keymap br-abnt2
-      sudo localectl set-locale LANG="en_US.utf8"
-      sudo sed -i "s/#PermitRootLogin/PermitRootLogin/g" /etc/ssh/sshd_config
-      sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-      sudo sed -i "s/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g" /etc/ssh/sshd_config
-      sudo systemctl restart sshd
-    SHELL
   end
 end
